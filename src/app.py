@@ -120,9 +120,14 @@ def add_favorite_planet(planet_id):
     body = request.json
     user_id = body.get("user_id", None)
 
+    planet_exist = Favorite.query.filter_by(planet_id=planet_id).first()
+
     if user_id is None or planet_id is None:
         return jsonify({"error": "Missing values"}),400
     
+    if planet_exist is not None:
+        return jsonify({"error": f"Planet {planet_id} already exist"}),400
+
     new_planet = Favorite(user_id=user_id,planet_id=planet_id)
 
     try:
@@ -130,7 +135,7 @@ def add_favorite_planet(planet_id):
         db.session.commit()
         db.session.refresh(new_planet)
 
-        return jsonify({"message": f"Character added successfully"}),201
+        return jsonify({"message": f"Planet added successfully"}),201
     except Exception as error:
         return jsonify({"error": {error}}),500
 
@@ -139,17 +144,21 @@ def add_favorite_people(people_id):
     body = request.json
     user_id = body.get("user_id", None)
 
-    if user_id is None:
+    character_exist = Favorite.query.filter_by(character_id=people_id).first()
+    if user_id is None or people_id is None:
         return jsonify({"error": "missing values"}), 400
 
-    new_character = Favorite(user_id=user_id, people_id=people_id)
+    if character_exist is not None:
+        return jsonify({"error":f"Character {people_id} already exists"}), 400
+    
+    new_character = Favorite(user_id=user_id, character_id=people_id)
 
     try:
         db.session.add(new_character)
         db.session.commit()
         db.session.refresh(new_character)
 
-        return jsonify({"message": f"Planet added successfully"}),201
+        return jsonify({"message": f"Character added successfully"}),201
     
     except Exception as error:
         return jsonify({"error", {error}}), 500

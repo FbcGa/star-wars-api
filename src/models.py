@@ -25,7 +25,6 @@ class Character(db.Model):
     eye_color = db.Column(db.String(120), nullable=False)
     hair_color = db.Column(db.String(120), nullable=False)
 
-    planets = db.relationship('CharacterPlanet', backref='characters', lazy=True)
 
     def __repr__(self):
         return '<Character %r>' % self.name
@@ -46,7 +45,6 @@ class Planet(db.Model):
     diameter = db.Column(db.String(120), nullable=False)
     climate = db.Column(db.String(120), nullable=False)
 
-    characters = db.relationship('CharacterPlanet', backref='planet', lazy=True)
 
     def __repr__(self):
         return '<Planet %r>' % self.name
@@ -60,20 +58,6 @@ class Planet(db.Model):
             "climate": self.climate,
         }
 
-class CharacterPlanet(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    planet_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
-    character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
-    
-    def serialize(self):
-        return {
-            "id": self.id,
-            "episodes": self.episode_id,
-            "characters": self.character_id,
-            }
-
-    def __repr__(self):
-        return f'<CharacterApperances character: {self.character_id} episode: {self.episode_id}>'
     
 class Favorite(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -90,7 +74,7 @@ class Favorite(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "user": self.user,
-            "character": self.character,
-            "planet": self.planet
+            "user_id": self.user_id,
+            "character_id": self.character_id,
+            "planet_id": self.planet_id
         }
