@@ -89,9 +89,9 @@ def get_users():
 
     return jsonify({"users": users_serialize}), 200
 
-@app.route('/users/favorites', methods=['GET'])
-def get_users_favorite():
-    favorites = Favorite.query.all()
+@app.route('/users/<int:user_id>/favorites', methods=['GET'])
+def get_users_favorite(user_id):
+    favorites = Favorite.query.filter_by(user_id=user_id)
     favorites_serialize = [favorite.serialize() for favorite in favorites]
 
     return jsonify({"favorites" : favorites_serialize}),200

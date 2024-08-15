@@ -24,7 +24,7 @@ class Character(db.Model):
     birth_year = db.Column(db.Integer, nullable=False)
     eye_color = db.Column(db.String(120), nullable=False)
     hair_color = db.Column(db.String(120), nullable=False)
-
+    characters = db.relationship("Favorite", back_populates="character")
 
     def __repr__(self):
         return '<Character %r>' % self.name
@@ -44,7 +44,7 @@ class Planet(db.Model):
     rotation_period = db.Column(db.Integer, nullable=False)
     diameter = db.Column(db.String(120), nullable=False)
     climate = db.Column(db.String(120), nullable=False)
-
+    planets = db.relationship("Favorite", back_populates="planet")
 
     def __repr__(self):
         return '<Planet %r>' % self.name
@@ -65,8 +65,8 @@ class Favorite(db.Model):
     character_id = db.Column(db.Integer, db.ForeignKey('character.id'))
     planet_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
 
-    character = db.relationship("Character", backref="favorites")
-    planet = db.relationship("Planet", backref="favorites")
+    character = db.relationship(Character)
+    planet = db.relationship(Planet)
 
     def __repr__(self):
         return '<Favorite %r>' % self.user_id
@@ -75,6 +75,6 @@ class Favorite(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "character_id": self.character_id,
-            "planet_id": self.planet_id
+            "character": self.character.serialize() if self.character else None,
+            "planet": self.planet.serialize() if self.planet else None
         }
